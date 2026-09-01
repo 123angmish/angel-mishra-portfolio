@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: angel-mishra-portfolio-backend
+    env: docker
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: PORT
+        value: 8080
