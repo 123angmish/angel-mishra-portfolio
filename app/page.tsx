@@ -1,29 +1,366 @@
 "use client";
-import { useState } from "react";
-const projects=[
-{num:"01",name:"CampusShare",type:"Java · Flagship",copy:"A peer-to-peer campus marketplace engineered for safe rentals, purchases and physical handovers inside a university ecosystem.",points:["Concurrency-safe booking","Idempotent Razorpay webhooks","Rotating refresh tokens"],stack:"Java 21 · Spring Boot · React 19 · PostgreSQL · Spring Security",href:"https://github.com/123angmish/campus-share-project-",accent:"#b6ff6c"},
-{num:"02",name:"HireVia",type:"Java · Full Stack",copy:"A recruitment and applicant tracking platform connecting candidates and employers through secure messaging and an end-to-end hiring workflow.",points:["Role-based API boundaries","Server-side IDOR protection","Live ATS pipeline"],stack:"Java 21 · Spring Boot · React · Redux · PostgreSQL · JWT",href:"https://github.com/123angmish/hire-via-job-portal",accent:"#89a8ff"},
-{num:"03",name:"AI Virality Predictor",type:"ML · NIT Internship",copy:"A multimodal video-intelligence platform that evaluates short-form video pacing and engagement potential using computer vision, audio processing and regression.",points:["R² 0.8824 selected baseline","0–3s optical-flow hook analysis","Five-model benchmark comparison"],stack:"Python · FastAPI · OpenCV · Librosa · Scikit-learn · Next.js",href:"https://github.com/123angmish/ai-virality-predictor",accent:"#ffb45c"},
-{num:"04",name:"FloodGuard AI",type:"Computer Vision · FYP",copy:"A real-time flood monitoring prototype combining scene classification, surface-motion analysis and location-scoped alerts.",points:["MobileNetV2 classifier","Lucas–Kanade optical flow","WebSocket telemetry"],stack:"Python · FastAPI · TensorFlow · OpenCV · SQLite · WebSockets",href:"https://github.com/123angmish/floodguard-ai",accent:"#54d6ff"},
-{num:"05",name:"Cooknetic AI",type:"Java · AI Integration",copy:"A smart kitchen companion combining a Spring Boot backend with Gemini multimodal AI for ingredient recognition, meal planning and zero-waste recipes.",points:["Multimodal fridge scanner","14+ REST endpoints","Voice and nutrition workflows"],stack:"Java · Spring Boot · Maven · Gemini API · Web Speech API",href:"https://github.com/123angmish/Cooknetic-AI",accent:"#ff8fa3"},
-{num:"06",name:"BreakChain AI",type:"Java · Applied AI",copy:"An empathetic wellbeing platform with AI-assisted reflection, recovery tools, voice journaling and crisis-resource routing.",points:["Multi-model AI support","Java REST backend","13 interactive support tools"],stack:"Java · Maven · Gemini · OpenAI · Web Audio API",href:"https://github.com/123angmish/breakchain-AI",accent:"#c39bff"}];
-const Arrow=()=> <span aria-hidden="true">↗</span>;
-const achievements=[
- {code:"OSS",title:"GSSoC Contributor",org:"GirlScript Summer of Code",note:"Open-source contribution and collaborative development"},
- {code:"WEB3",title:"SheFi Participant",org:"SheFi learning community",note:"Web3 learning, community and emerging-technology exposure"},
- {code:"01",title:"First Runner-Up",org:"HackVerse 2025 · Banasthali Vidyapith",note:"Hackathon recognition"},
- {code:"02",title:"Second Place",org:"Triwizardathon 1.0 · MLSA GLA Chapter",note:"Technical competition recognition"},
- {code:"AI",title:"Research Intern",org:"NIT Kurukshetra · 2026",note:"Machine learning and computer-vision research"},
- {code:"HX",title:"HackIndia Participant",org:"HackIndia 2025",note:"Web3 and AI hackathon"}
+import { useState, useEffect } from "react";
+import {
+  fetchPortfolioFromBackend,
+  submitContactToBackend,
+  type ProjectItem,
+  type AchievementItem,
+  type SkillCategoryItem,
+  type ExperienceItemData,
+} from "@/lib/api";
+
+const initialProjects: ProjectItem[] = [
+  {num:"01",name:"CampusShare",type:"Java · Flagship",copy:"A peer-to-peer campus marketplace engineered for safe rentals, purchases and physical handovers inside a university ecosystem.",points:["Concurrency-safe booking","Idempotent Razorpay webhooks","Rotating refresh tokens"],stack:"Java 21 · Spring Boot · React 19 · PostgreSQL · Spring Security",href:"https://github.com/123angmish/campus-share-project-",accent:"#b6ff6c"},
+  {num:"02",name:"HireVia",type:"Java · Full Stack",copy:"A recruitment and applicant tracking platform connecting candidates and employers through secure messaging and an end-to-end hiring workflow.",points:["Role-based API boundaries","Server-side IDOR protection","Live ATS pipeline"],stack:"Java 21 · Spring Boot · React · Redux · PostgreSQL · JWT",href:"https://github.com/123angmish/hire-via-job-portal",accent:"#89a8ff"},
+  {num:"03",name:"AI Virality Predictor",type:"ML · NIT Internship",copy:"A multimodal video-intelligence platform that evaluates short-form video pacing and engagement potential using computer vision, audio processing and regression.",points:["R² 0.8824 selected baseline","0–3s optical-flow hook analysis","Five-model benchmark comparison"],stack:"Python · FastAPI · OpenCV · Librosa · Scikit-learn · Next.js",href:"https://github.com/123angmish/ai-virality-predictor",accent:"#ffb45c"},
+  {num:"04",name:"FloodGuard AI",type:"Computer Vision · FYP",copy:"A real-time flood monitoring prototype combining scene classification, surface-motion analysis and location-scoped alerts.",points:["MobileNetV2 classifier","Lucas–Kanade optical flow","WebSocket telemetry"],stack:"Python · FastAPI · TensorFlow · OpenCV · SQLite · WebSockets",href:"https://github.com/123angmish/floodguard-ai",accent:"#54d6ff"},
+  {num:"05",name:"Cooknetic AI",type:"Java · AI Integration",copy:"A smart kitchen companion combining a Spring Boot backend with Gemini multimodal AI for ingredient recognition, meal planning and zero-waste recipes.",points:["Multimodal fridge scanner","14+ REST endpoints","Voice and nutrition workflows"],stack:"Java · Spring Boot · Maven · Gemini API · Web Speech API",href:"https://github.com/123angmish/Cooknetic-AI",accent:"#ff8fa3"},
+  {num:"06",name:"BreakChain AI",type:"Java · Applied AI",copy:"An empathetic wellbeing platform with AI-assisted reflection, recovery tools, voice journaling and crisis-resource routing.",points:["Multi-model AI support","Java REST backend","13 interactive support tools"],stack:"Java · Maven · Gemini · OpenAI · Web Audio API",href:"https://github.com/123angmish/breakchain-AI",accent:"#c39bff"}
 ];
+
+const initialAchievements: AchievementItem[] = [
+  {code:"OSS",title:"GSSoC Contributor",org:"GirlScript Summer of Code",note:"Open-source contribution and collaborative development"},
+  {code:"WEB3",title:"SheFi Participant",org:"SheFi learning community",note:"Web3 learning, community and emerging-technology exposure"},
+  {code:"01",title:"First Runner-Up",org:"HackVerse 2025 · Banasthali Vidyapith",note:"Hackathon recognition"},
+  {code:"02",title:"Second Place",org:"Triwizardathon 1.0 · MLSA GLA Chapter",note:"Technical competition recognition"},
+  {code:"AI",title:"Research Intern",org:"NIT Kurukshetra · 2026",note:"Machine learning and computer-vision research"},
+  {code:"HX",title:"HackIndia Participant",org:"HackIndia 2025",note:"Web3 and AI hackathon"}
+];
+
+const initialSkills: SkillCategoryItem[] = [
+  {num:"01",category:"Backend",details:"Java 21, Spring Boot, Spring Security, Spring Data JPA, Hibernate, REST APIs"},
+  {num:"02",category:"Frontend",details:"React.js, Redux Toolkit, JavaScript, Tailwind CSS, accessible responsive UI"},
+  {num:"03",category:"Data & delivery",details:"PostgreSQL, MySQL, Flyway, Docker, Maven, Git, GitHub, Postman"},
+  {num:"04",category:"Security",details:"JWT, BCrypt, RBAC, ownership validation, rate limiting, secure payments"},
+  {num:"05",category:"ML & vision",details:"Scikit-learn, TensorFlow, OpenCV, MobileNetV2, optical flow, regression and model evaluation"}
+];
+
+const Arrow = () => <span aria-hidden="true">↗</span>;
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-export default function Home(){const[open,setOpen]=useState(false);return <main>
-<header className="nav"><a className="brand" href="#top">AM<span>.</span></a><button className="menu" onClick={()=>setOpen(!open)} aria-expanded={open}>{open?"Close":"Menu"}</button><nav className={open?"links open":"links"}>{["work","about","achievements","experience","contact"].map(x=><a key={x} href={"#"+x} onClick={()=>setOpen(false)}>{x[0].toUpperCase()+x.slice(1)}</a>)}</nav></header>
-<section className="hero" id="top"><div className="availability"><i/>Available for software engineering opportunities</div><div className="hero-grid"><div><p className="eyebrow">Java backend developer · Full-stack engineer</p><h1>I build secure systems that hold up <em>under pressure.</em></h1><p className="intro">I’m Angel Mishra, an ECE undergraduate turning real-world problems into robust Spring Boot APIs and thoughtful React experiences.</p><div className="actions"><a className="primary" href="#work">Explore my work <span>↓</span></a><a className="resume-button" href={`${basePath}/Angel-Mishra-Resume.pdf`} download>Download resume <span>↓</span></a><a className="text-link" href="mailto:angelmishraofficial@gmail.com">Let’s talk <Arrow/></a></div></div><figure className="portrait-wrap constellation-core"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><a className="orbit-node node-java" href="#work"><b>JAVA</b><small>core</small></a><a className="orbit-node node-sec" href="#work"><b>SEC</b><small>trust</small></a><a className="orbit-node node-ml" href="#experience"><b>ML</b><small>signal</small></a><a className="orbit-node node-react" href="#work"><b>UI</b><small>surface</small></a><div className="portrait-line"/><img src={`${basePath}/angel-mishra.jpg`} alt="Angel Mishra outdoors on campus"/><figcaption><span>System core · Angel</span><span>Rajasthan, India</span></figcaption></figure></div><div className="signal"><span>JAVA 21</span><span>SPRING BOOT</span><span>REST APIS</span><span>REACT</span><span>POSTGRESQL</span><span>SECURITY</span></div></section>
-<section className="work section" id="work"><div className="section-head"><p className="eyebrow">Selected engineering work</p><p>Projects built around real constraints: concurrency, authorization, data integrity and low-latency processing.</p></div><div className="projects">{projects.map(p=><article className="project" key={p.name} style={{"--accent":p.accent} as React.CSSProperties}><div className="project-top"><span className="project-num">{p.num}</span><span className="project-type">{p.type}</span></div><h2>{p.name}</h2><p className="project-copy">{p.copy}</p><ul>{p.points.map(x=><li key={x}>{x}</li>)}</ul><div className="project-bottom"><p>{p.stack}</p><a href={p.href} target="_blank" rel="noreferrer">View repository <Arrow/></a></div></article>)}</div></section>
-<section className="about section" id="about"><div><p className="eyebrow">About me</p><h2>Engineering mindset.<br/><em>Human perspective.</em></h2></div><div className="about-copy"><p>I care about what happens beyond the happy path. My backend work focuses on secure authentication, ownership validation, transactional consistency and APIs that remain understandable as a product grows.</p><p>My electronics background and computer-vision research add a systems perspective: measure carefully, understand constraints, and defend every technical choice.</p><div className="facts"><div><strong>2027</strong><span>B.Tech graduation</span></div><div><strong>3×</strong><span>Hackathon recognition</span></div><div><strong>NIT KKR</strong><span>Research internship</span></div></div></div></section>
-<section className="achievement-system section" id="achievements"><div className="achievement-intro"><p className="eyebrow">Recognition constellation</p><h2>Signals collected<br/>along the way.</h2><p>Communities, competitions and research experiences that expanded how I build, collaborate and learn.</p></div><div className="constellation-map"><div className="map-core"><span>AM</span><small>learning in public</small></div>{achievements.map((a,i)=><article className={"achievement-signal signal-"+(i+1)} key={a.title}><span className="signal-code">{a.code}</span><div><h3>{a.title}</h3><p>{a.org}</p><small>{a.note}</small></div></article>)}</div></section>
-<section className="skills section"><p className="eyebrow">Technical toolkit</p><div className="skill-grid"><div><span>01</span><h3>Backend</h3><p>Java 21, Spring Boot, Spring Security, Spring Data JPA, Hibernate, REST APIs</p></div><div><span>02</span><h3>Frontend</h3><p>React.js, Redux Toolkit, JavaScript, Tailwind CSS, accessible responsive UI</p></div><div><span>03</span><h3>Data & delivery</h3><p>PostgreSQL, MySQL, Flyway, Docker, Maven, Git, GitHub, Postman</p></div><div><span>04</span><h3>Security</h3><p>JWT, BCrypt, RBAC, ownership validation, rate limiting, secure payments</p></div><div><span>05</span><h3>ML & vision</h3><p>Scikit-learn, TensorFlow, OpenCV, MobileNetV2, optical flow, regression and model evaluation</p></div></div></section>
-<section className="experience section" id="experience"><p className="eyebrow">Experience & education</p><div className="timeline"><article><time>May — Jul 2026</time><div><h3>Research Intern <span>· NIT Kurukshetra</span></h3><p>Developed the research prototype behind AI Virality Predictor, combining multimodal feature engineering with a reproducible machine-learning evaluation pipeline.</p><div className="ml-details"><span>OpenCV optical-flow analysis for motion and 0–3 second hook intensity</span><span>Scene-change, pacing, brightness, contrast and visual feature extraction</span><span>Librosa RMS audio-energy and acoustic peak analysis</span><span>Compared Linear, Ridge, Gradient Boosting, HistGradientBoosting and Random Forest regressors</span><span>Selected Linear Regression at R² 0.8824, RMSE 4.5194 and MAE 3.7105 on the documented benchmark</span><span>Added inference, recommendations, history, visualizations and automated PDF reporting</span></div></div></article><article><time>2023 — 2027</time><div><h3>B.Tech, Electronics & Communication <span>· Banasthali Vidyapith</span></h3><p>Bridging core engineering with backend development, computer science fundamentals and applied machine learning.</p></div></article><article><time>2024 — 2026</time><div><h3>NSS Volunteer</h3><p>Contributed to community outreach, awareness campaigns and collaborative social initiatives.</p></div></article></div></section>
-<footer id="contact"><p className="eyebrow">Let’s build something reliable</p><h2>Have an opportunity<br/>worth solving? <em>Let’s talk.</em></h2><a className="mail" href="mailto:angelmishraofficial@gmail.com">angelmishraofficial@gmail.com <Arrow/></a><div className="footer-row"><span>© 2026 Angel Mishra</span><div><a href="https://github.com/123angmish" target="_blank" rel="noreferrer">GitHub</a><a href="https://www.linkedin.com/in/angel-mishra-992474345/" target="_blank" rel="noreferrer">LinkedIn</a></div></div></footer>
-</main>}
+
+export default function Home() {
+  const [open, setOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [projects, setProjects] = useState<ProjectItem[]>(initialProjects);
+  const [achievements, setAchievements] = useState<AchievementItem[]>(initialAchievements);
+  const [skills, setSkills] = useState<SkillCategoryItem[]>(initialSkills);
+  
+  // Contact form state
+  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => {
+    async function loadData() {
+      const data = await fetchPortfolioFromBackend();
+      if (data) {
+        if (data.projects && data.projects.length > 0) setProjects(data.projects);
+        if (data.achievements && data.achievements.length > 0) setAchievements(data.achievements);
+        if (data.skills && data.skills.length > 0) setSkills(data.skills);
+      }
+    }
+    loadData();
+  }, []);
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setStatusMessage(null);
+
+    const res = await submitContactToBackend(formData);
+    setSubmitting(false);
+
+    if (res.success) {
+      setStatusMessage({ type: "success", text: res.message });
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      setTimeout(() => {
+        setContactOpen(false);
+        setStatusMessage(null);
+      }, 2500);
+    } else {
+      setStatusMessage({ type: "error", text: res.message });
+    }
+  };
+
+  return (
+    <main>
+      <header className="nav">
+        <a className="brand" href="#top">AM<span>.</span></a>
+        <button className="menu" onClick={() => setOpen(!open)} aria-expanded={open}>{open ? "Close" : "Menu"}</button>
+        <nav className={open ? "links open" : "links"}>
+          {["work", "about", "achievements", "skills", "experience", "contact"].map((x) => (
+            <a key={x} href={"#" + x} onClick={() => setOpen(false)}>
+              {x[0].toUpperCase() + x.slice(1)}
+            </a>
+          ))}
+        </nav>
+      </header>
+
+      <section className="hero" id="top">
+        <div className="availability">
+          <i />Available for software engineering opportunities
+        </div>
+        <div className="hero-grid">
+          <div>
+            <p className="eyebrow">Java backend developer · Full-stack engineer</p>
+            <h1>I build secure systems that hold up <em>under pressure.</em></h1>
+            <p className="intro">
+              I’m Angel Mishra, an ECE undergraduate turning real-world problems into robust Spring Boot APIs and thoughtful React experiences.
+            </p>
+            <div className="actions">
+              <a className="primary" href="#work">Explore my work <span>↓</span></a>
+              <a className="resume-button" href={`${basePath}/Angel-Mishra-Resume.pdf`} download>
+                Download resume <span>↓</span>
+              </a>
+              <button
+                className="text-link"
+                style={{ background: "none", border: 0, borderBottom: "1px solid #60645e", color: "inherit", cursor: "pointer", font: "inherit" }}
+                onClick={() => setContactOpen(true)}
+              >
+                Let’s talk <Arrow />
+              </button>
+            </div>
+          </div>
+          <figure className="portrait-wrap constellation-core">
+            <div className="orbit orbit-one" />
+            <div className="orbit orbit-two" />
+            <a className="orbit-node node-java" href="#work"><b>JAVA</b><small>core</small></a>
+            <a className="orbit-node node-sec" href="#work"><b>SEC</b><small>trust</small></a>
+            <a className="orbit-node node-ml" href="#experience"><b>ML</b><small>signal</small></a>
+            <a className="orbit-node node-react" href="#work"><b>UI</b><small>surface</small></a>
+            <div className="portrait-line" />
+            <img src={`${basePath}/angel-mishra.jpg`} alt="Angel Mishra outdoors on campus" />
+            <figcaption>
+              <span>System core · Angel</span>
+              <span>Rajasthan, India</span>
+            </figcaption>
+          </figure>
+        </div>
+        <div className="signal">
+          <span>JAVA 21</span>
+          <span>SPRING BOOT</span>
+          <span>REST APIS</span>
+          <span>REACT</span>
+          <span>POSTGRESQL</span>
+          <span>SECURITY</span>
+        </div>
+      </section>
+
+      <section className="work section" id="work">
+        <div className="section-head">
+          <p className="eyebrow">Selected engineering work</p>
+          <p>Projects built around real constraints: concurrency, authorization, data integrity and low-latency processing.</p>
+        </div>
+        <div className="projects">
+          {projects.map((p) => (
+            <article className="project" key={p.name} style={{ "--accent": p.accent } as React.CSSProperties}>
+              <div className="project-top">
+                <span className="project-num">{p.num}</span>
+                <span className="project-type">{p.type}</span>
+              </div>
+              <h2>{p.name}</h2>
+              <p className="project-copy">{p.copy}</p>
+              <ul>
+                {p.points.map((x) => (
+                  <li key={x}>{x}</li>
+                ))}
+              </ul>
+              <div className="project-bottom">
+                <p>{p.stack}</p>
+                <a href={p.href} target="_blank" rel="noreferrer">View repository <Arrow /></a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="about section" id="about">
+        <div>
+          <p className="eyebrow">About me</p>
+          <h2>Engineering mindset.<br /><em>Human perspective.</em></h2>
+        </div>
+        <div className="about-copy">
+          <p>
+            I care about what happens beyond the happy path. My backend work focuses on secure authentication, ownership validation, transactional consistency and APIs that remain understandable as a product grows.
+          </p>
+          <p>
+            My electronics background and computer-vision research add a systems perspective: measure carefully, understand constraints, and defend every technical choice.
+          </p>
+          <div className="facts">
+            <div><strong>2027</strong><span>B.Tech graduation</span></div>
+            <div><strong>3×</strong><span>Hackathon recognition</span></div>
+            <div><strong>NIT KKR</strong><span>Research internship</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="achievement-system section" id="achievements">
+        <div className="achievement-intro">
+          <p className="eyebrow">Recognition constellation</p>
+          <h2>Signals collected<br />along the way.</h2>
+          <p>Communities, competitions and research experiences that expanded how I build, collaborate and learn.</p>
+        </div>
+        <div className="constellation-map">
+          <div className="map-core">
+            <span>AM</span>
+            <small>learning in public</small>
+          </div>
+          {achievements.map((a, i) => (
+            <article className={"achievement-signal signal-" + (i + 1)} key={a.title}>
+              <span className="signal-code">{a.code}</span>
+              <div>
+                <h3>{a.title}</h3>
+                <p>{a.org}</p>
+                <small>{a.note}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="skills section" id="skills">
+        <p className="eyebrow">Technical toolkit</p>
+        <div className="skill-grid">
+          {skills.map((s) => (
+            <div key={s.category}>
+              <span>{s.num}</span>
+              <h3>{s.category}</h3>
+              <p>{s.details}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="experience section" id="experience">
+        <p className="eyebrow">Experience & education</p>
+        <div className="timeline">
+          <article>
+            <time>May — Jul 2026</time>
+            <div>
+              <h3>Research Intern <span>· NIT Kurukshetra</span></h3>
+              <p>Developed the research prototype behind AI Virality Predictor, combining multimodal feature engineering with a reproducible machine-learning evaluation pipeline.</p>
+              <div className="ml-details">
+                <span>OpenCV optical-flow analysis for motion and 0–3 second hook intensity</span>
+                <span>Scene-change, pacing, brightness, contrast and visual feature extraction</span>
+                <span>Librosa RMS audio-energy and acoustic peak analysis</span>
+                <span>Compared Linear, Ridge, Gradient Boosting, HistGradientBoosting and Random Forest regressors</span>
+                <span>Selected Linear Regression at R² 0.8824, RMSE 4.5194 and MAE 3.7105 on the documented benchmark</span>
+                <span>Added inference, recommendations, history, visualizations and automated PDF reporting</span>
+              </div>
+            </div>
+          </article>
+          <article>
+            <time>2023 — 2027</time>
+            <div>
+              <h3>B.Tech, Electronics & Communication <span>· Banasthali Vidyapith</span></h3>
+              <p>Bridging core engineering with backend development, computer science fundamentals and applied machine learning.</p>
+            </div>
+          </article>
+          <article>
+            <time>2024 — 2026</time>
+            <div>
+              <h3>NSS Volunteer</h3>
+              <p>Contributed to community outreach, awareness campaigns and collaborative social initiatives.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <footer id="contact">
+        <p className="eyebrow">Let’s build something reliable</p>
+        <h2>Have an opportunity<br />worth solving? <em>Let’s talk.</em></h2>
+        <div style={{ display: "flex", gap: "2rem", alignItems: "center", flexWrap: "wrap", margin: "2rem 0" }}>
+          <a className="mail" href="mailto:angelmishraofficial@gmail.com">
+            angelmishraofficial@gmail.com <Arrow />
+          </a>
+          <button
+            className="primary"
+            style={{ border: 0, cursor: "pointer" }}
+            onClick={() => setContactOpen(true)}
+          >
+            Send a direct message <span>✉</span>
+          </button>
+        </div>
+        <div className="footer-row">
+          <span>© 2026 Angel Mishra · Spring Boot & React</span>
+          <div>
+            <a href="https://github.com/123angmish" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/in/angel-mishra-992474345/" target="_blank" rel="noreferrer">LinkedIn</a>
+          </div>
+        </div>
+      </footer>
+
+      {/* Interactive Contact Modal */}
+      {contactOpen && (
+        <div className="modal-overlay" onClick={() => setContactOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setContactOpen(false)} aria-label="Close modal">
+              ✕
+            </button>
+            <div className="badge-java-backend">
+              <i /> Powered by Java Spring Boot API
+            </div>
+            <h3 className="modal-title">Get in touch</h3>
+            <p className="modal-desc">
+              Have an engineering opportunity, collaboration or question? Send a message directly to my backend inbox.
+            </p>
+            <form onSubmit={handleContactSubmit}>
+              <div className="form-group">
+                <label>Your Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Alex Smith"
+                  className="form-input"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label>Your Email *</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g. alex@company.com"
+                  className="form-input"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label>Subject</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Software Engineering Opportunity"
+                  className="form-input"
+                  value={formData.subject}
+                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label>Message *</label>
+                <textarea
+                  required
+                  rows={4}
+                  placeholder="Type your message here..."
+                  className="form-textarea"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                />
+              </div>
+              <button type="submit" className="form-btn" disabled={submitting}>
+                {submitting ? "Processing through Spring Boot..." : "Send message ↗"}
+              </button>
+            </form>
+            {statusMessage && (
+              <div className={`form-status ${statusMessage.type}`}>
+                {statusMessage.text}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}
+

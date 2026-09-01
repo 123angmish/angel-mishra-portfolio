@@ -41,3 +41,12 @@ next-env.d.ts
 /.sites-runtime/
 /outputs/
 /work/
+
+# Java & Maven
+target/
+*.class
+.idea/
+*.iml
+.project
+.classpath
+.settings/

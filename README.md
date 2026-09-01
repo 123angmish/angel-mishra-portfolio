@@ -16,46 +16,52 @@ Personal developer portfolio website showcasing engineering projects, research, 
 
 ## 🚀 Tech Stack
 
-- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+### Backend
+- **Language**: Java 21 / 25
+- **Framework**: Spring Boot 3.4.x (Spring Web, Spring Data JPA, Jakarta Validation)
+- **Database**: H2 In-Memory Database (Persistent Console at `/h2-console`)
+- **Build Tool**: Maven 3.9+
+
+### Frontend
+- **Framework**: [Next.js](https://nextjs.org/) 16 (App Router)
 - **UI & Styling**: React 19, Tailwind CSS
 - **Language**: TypeScript
-- **Hosting**: GitHub Pages (Automatic CI/CD Static Export)
+- **Hosting**: GitHub Pages (CI/CD) / Standalone Spring Boot Static Hosting
 
 ---
 
-## 🛠️ Featured Projects
+## 📡 REST API Endpoints (Java Spring Boot)
 
-1. **CampusShare** — Concurrency-safe peer-to-peer campus marketplace (Java 21, Spring Boot, React 19, PostgreSQL).
-2. **HireVia** — Recruitment and applicant tracking platform with role-based boundaries (Java 21, Spring Boot, React, Redux, PostgreSQL).
-3. **AI Virality Predictor** — Multimodal short-form video pacing and engagement predictor (Python, FastAPI, OpenCV, Librosa, Scikit-learn).
-4. **FloodGuard AI** — Real-time flood monitoring prototype with scene classification and telemetry (Python, FastAPI, TensorFlow, OpenCV).
-5. **Cooknetic AI** — Smart kitchen companion using Gemini multimodal AI (Java, Spring Boot, Gemini API).
-6. **BreakChain AI** — Empathetic wellbeing platform with AI-assisted reflection and recovery tools (Java, Gemini, OpenAI).
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/health` | Service health status & JVM runtime telemetry |
+| `GET` | `/api/v1/portfolio` | Full portfolio aggregated payload |
+| `GET` | `/api/v1/portfolio/profile` | Developer bio, social links & headline |
+| `GET` | `/api/v1/portfolio/projects` | List of featured software projects |
+| `GET` | `/api/v1/portfolio/skills` | Categorized technical skills matrix |
+| `GET` | `/api/v1/portfolio/achievements` | Recognition & competition milestones |
+| `POST` | `/api/v1/contact` | Validated contact form submission & message inbox |
+| `GET` | `/api/v1/contact/all` | View received contact inquiries |
 
 ---
 
-## 💻 Local Development
+## 💻 Running the Full-Stack Application Locally
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/123angmish/angel-mishra-portfolio.git
-   cd angel-mishra-portfolio
-   ```
+### 1. Start the Java Spring Boot Backend
+```bash
+cd backend
+mvn spring-boot:run
+```
+*The Spring Boot REST API will start on `http://localhost:8080`.*  
+*H2 Database console is accessible at `http://localhost:8080/h2-console`.*
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-
-4. **Build for production:**
-   ```bash
-   npm run build
-   ```
+### 2. Start the React Frontend
+```bash
+# In the root directory
+npm install
+npm run dev
+```
+*The frontend will run on `http://localhost:3000` and automatically communicate with the Spring Boot backend.*
 
 ---
 
