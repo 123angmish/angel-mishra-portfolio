@@ -1,7 +1,14 @@
 # Angel Mishra — Developer Portfolio
 
+[![Live Demo](https://img.shields.io/badge/Live_Portfolio-Visit_Website-00C7B7?style=for-the-badge&logo=google-chrome&logoColor=white)](https://123angmish.github.io/angel-mishra-portfolio/)
+[![GitHub Pages](https://img.shields.io/badge/Deployed_on-GitHub_Pages-222222?style=for-the-badge&logo=github&logoColor=white)](https://123angmish.github.io/angel-mishra-portfolio/)
+[![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
 Personal developer portfolio website showcasing engineering projects, research, technical skills, and experience.
 
+🌐 **Live Website**: [https://123angmish.github.io/angel-mishra-portfolio/](https://123angmish.github.io/angel-mishra-portfolio/)  
 👤 **Portfolio of**: Angel Mishra  
 💼 **Specialization**: Java Backend Development · Full-Stack Engineering · Machine Learning
 
@@ -12,6 +19,7 @@ Personal developer portfolio website showcasing engineering projects, research, 
 - **Framework**: [Next.js](https://nextjs.org/) (App Router)
 - **UI & Styling**: React 19, Tailwind CSS
 - **Language**: TypeScript
+- **Hosting**: GitHub Pages (Automatic CI/CD Static Export)
 
 ---
 
